@@ -36,15 +36,17 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'api.apps.ApiConfig',
-    'users.apps.UsersConfig',
-    'recipes.apps.RecipesConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'api.apps.ApiConfig',
+    'users.apps.UsersConfig',
+    'recipes.apps.RecipesConfig',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -130,7 +132,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 LIMIT_NAME_LENGHT = 256
-LIMIT_SLUG_LENGHT = 50
-LIMIT_UM_LENGHT = 6
+LIMIT_SLUG_LENGHT = 200
+LIMIT_MU_LENGHT = 6
 LIMIT_COLOR_LENGHT = 7
 LIMIT_EMAIL_LENGHT = 254

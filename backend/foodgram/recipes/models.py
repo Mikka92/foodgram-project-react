@@ -9,8 +9,8 @@ class Ingredient(models.Model):
         max_length=settings.LIMIT_NAME_LENGHT,
         verbose_name='Название'
     )
-    unit_measurement = models.CharField(
-        max_length=settings.LIMIT_UM_LENGHT,
+    measurement_unit = models.CharField(
+        max_length=settings.LIMIT_MU_LENGHT,
         verbose_name='Еденица измерения'
     )
 
@@ -36,7 +36,7 @@ class Tag(models.Model):
     slug = models.SlugField(
         max_length=settings.LIMIT_SLUG_LENGHT,
         unique=True,
-        verbose_name='Слаг'
+        verbose_name='Уникальный слаг'
     )
 
     class Meta:
@@ -69,7 +69,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         related_name='recipes',
-        verbose_name='Ингредиенты'
+        verbose_name='Список ингредиентов'
     )
     tag = models.ManyToManyField(
         Tag,
@@ -139,18 +139,18 @@ class Favourit(models.Model):
         return self.name
 
 
-class ShoppingList(models.Model):
+class ShoppingCart(models.Model):
     """Модель для списка покупок"""
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='shopping_lists',
+        related_name='shopping_cart',
         verbose_name='Рецепт'
     )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='shopping_lists',
+        related_name='shopping_cart',
         verbose_name='Пользователь'
     )
 
