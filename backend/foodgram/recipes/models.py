@@ -1,10 +1,12 @@
 from django.conf import settings
 from django.db import models
+
+from api.validators import validate_date
 from users.models import User
 
 
 class Ingredient(models.Model):
-    """"Модель ингредиент"""
+    """"Модель ингредиент."""
     name = models.CharField(
         max_length=settings.LIMIT_NAME_LENGHT,
         verbose_name='Название'
@@ -23,7 +25,7 @@ class Ingredient(models.Model):
 
 
 class Tag(models.Model):
-    """"Модель тег"""
+    """"Модель тег."""
     name = models.CharField(
         max_length=settings.LIMIT_NAME_LENGHT,
         verbose_name='Название'
@@ -48,7 +50,7 @@ class Tag(models.Model):
 
 
 class Recipe(models.Model):
-    """"Модель рецепт"""
+    """"Модель рецепт."""
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -63,15 +65,16 @@ class Recipe(models.Model):
         upload_to='recipe/',
         verbose_name='Изображение'
     )
-    description = models.TextField(
+    text = models.TextField(
         verbose_name='Описание'
     )
     ingredients = models.ManyToManyField(
         Ingredient,
         related_name='recipes',
-        verbose_name='Список ингредиентов'
+        verbose_name='Список ингредиентов',
+        through='IngredientForRecipe'
     )
-    tag = models.ManyToManyField(
+    tags = models.ManyToManyField(
         Tag,
         related_name='recipes',
         verbose_name='Тег'
@@ -79,9 +82,10 @@ class Recipe(models.Model):
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления'
     )
-    pub_date = models.DateField(
-        auto_now_add=True,
-        verbose_name='Дата публикации'
+    date = models.DateTimeField(
+        verbose_name='Дата публикации',
+        validators=(validate_date,),
+        auto_now_add=True
     )
 
     class Meta:
@@ -93,15 +97,17 @@ class Recipe(models.Model):
 
 
 class IngredientForRecipe(models.Model):
-    """"Модель ингредиенты для рецепта"""
+    """"Модель ингредиенты для рецепта."""
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
+        related_name='amount',
         verbose_name='Ингредиент'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
+        related_name='recipe',
         verbose_name='Рецепт'
     )
     amount = models.PositiveSmallIntegerField(
@@ -117,7 +123,7 @@ class IngredientForRecipe(models.Model):
 
 
 class Favourit(models.Model):
-    """"Модель для избранных рецепотв"""
+    """"Модель для избранных рецепотв."""
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -140,7 +146,7 @@ class Favourit(models.Model):
 
 
 class ShoppingCart(models.Model):
-    """Модель для списка покупок"""
+    """Модель для списка покупок."""
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,

@@ -14,16 +14,19 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ('name', 'color', 'slug',)
 
 
+class IngredientForRecipeAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'ingredient', 'recipe', 'amount',)
+    search_fields = ('recipe', 'ingredient',)
+    list_editable = ('ingredient', 'amount',)
+    list_filter = ('recipe',)
+
+
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         'pk', 'author', 'name', 'image', 'description',
         'cooking_time', 'pub_date',)
     search_fields = ('author', 'name', 'tag',)
     list_filter = ('author', 'name', 'tag',)
-
-
-class IngredientForRecipeAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'ingredient', 'recipe', 'amount',)
 
 
 class FavouritAdmin(admin.ModelAdmin):
