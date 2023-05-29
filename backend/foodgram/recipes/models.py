@@ -1,7 +1,6 @@
+from api.validators import validate_date
 from django.conf import settings
 from django.db import models
-
-from api.validators import validate_date
 from users.models import User
 
 

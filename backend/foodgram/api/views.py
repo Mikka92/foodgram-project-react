@@ -1,15 +1,16 @@
+from api.pagination import LimitPageNumberPagination
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
+from recipes.models import Favourit, Ingredient, Recipe, ShoppingCart, Tag
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
+from rest_framework.permissions import (SAFE_METHODS, AllowAny,
+                                        IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-
-from api.pagination import LimitPageNumberPagination
-from recipes.models import Favourit, Ingredient, Recipe, ShoppingCart, Tag
 from users.models import Subscription, User
 
 from .permissions import IsAuthorOrReadOnly
@@ -26,6 +27,7 @@ class CustomUserViewsSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
     pagination_class = LimitPageNumberPagination
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     @action(
             detail=False,
@@ -107,7 +109,7 @@ class TagViewsSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
-    permission_classes = (IsAuthorOrReadOnly,)
+    permission_classes = (AllowAny,)
 
 
 class IngredientViewsSet(ReadOnlyModelViewSet):
@@ -116,7 +118,7 @@ class IngredientViewsSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
-    permission_classes = (IsAuthorOrReadOnly,)
+    permission_classes = (AllowAny,)
 
 
 class RecipeViewsSet(ModelViewSet):
