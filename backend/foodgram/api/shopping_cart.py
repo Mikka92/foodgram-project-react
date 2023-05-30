@@ -1,4 +1,4 @@
-from collections import defaultdict
+from django.db.models.aggregates import Sum
 
 from recipes.models import IngredientForRecipe
 
@@ -6,15 +6,14 @@ from recipes.models import IngredientForRecipe
 def get_shopping_cart(user):
     ingredients = IngredientForRecipe.objects.filter(
         recipe__shopping_cart__user=user
-    ).select_related('ingredient')
-    compressed_ingredients = defaultdict(int)
-    for ing in ingredients:
-        name = ing.ingredient.name
-        measurement_unit = ing.ingredient.measurement_unit
-        amount = ing.amount
-        compressed_ingredients[(name, measurement_unit)] += amount
+    ).values(
+        'ingredient__name', 'ingredient__measurement_unit'
+    ).annotate(
+        total_amount=Sum('amount')
+    )
     return [
-        f'- {name}: {amount} {measurement_unit}\n'
-        for (name, measurement_unit), amount
-        in compressed_ingredients.items()
+        f'- {ing["ingredient__name"]}: '
+        f'{ing["total_amount"]} '
+        f'{ing["ingredient__measurement_unit"]}'
+        for ing in ingredients
     ]
