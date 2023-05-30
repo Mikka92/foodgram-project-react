@@ -13,7 +13,7 @@ class User(AbstractUser):
         verbose_name='Логин'
     )
     email = models.EmailField(
-        max_length=settings.LIMIT_EMAIL_LENGHT,
+        max_length=settings.LIMIT_EMAIL_LENGTH,
         unique=True,
         verbose_name='Почта'
     )

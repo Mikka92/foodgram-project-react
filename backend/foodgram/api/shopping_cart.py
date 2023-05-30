@@ -6,7 +6,7 @@ from recipes.models import IngredientForRecipe
 def get_shopping_cart(user):
     ingredients = IngredientForRecipe.objects.filter(
         recipe__shopping_cart__user=user
-    )
+    ).select_related('ingredient')
     compressed_ingredients = defaultdict(int)
     for ing in ingredients:
         name = ing.ingredient.name

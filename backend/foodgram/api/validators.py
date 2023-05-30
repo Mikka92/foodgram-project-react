@@ -16,14 +16,6 @@ def validate_ingredient(value):
     return value
 
 
-def validate_cooking_time(value):
-    if value < 1:
-        raise ValidationError(
-            'Время приготовления должно быть не менее 1 минуты.'
-        )
-    return value
-
-
 def validate_date(value):
     try:
         date = datetime.strptime(value, '%Y-%m-%d')
@@ -34,5 +26,27 @@ def validate_date(value):
     if date > datetime.now():
         raise ValidationError(
             'Дата не может быть в будущем!'
+        )
+    return value
+
+
+def validate_cooking_time(value):
+    if value <= 0:
+        raise ValidationError(
+            'Время приготовления должно быть не менее 1 минуты!'
+        )
+    elif value >= 32767:
+        raise ValidationError(
+            'Время приготовления должно быть не более 32767 минут!'
+        )
+    return value
+
+
+def validate_hex_color(value):
+    if not re.match(
+        r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$', value
+    ):
+        raise ValidationError(
+            'Неверный формат HEX цвета!'
         )
     return value

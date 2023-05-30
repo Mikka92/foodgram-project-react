@@ -1,9 +1,7 @@
-from api.pagination import LimitPageNumberPagination
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import Favourit, Ingredient, Recipe, ShoppingCart, Tag
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import (SAFE_METHODS, AllowAny,
@@ -11,14 +9,17 @@ from rest_framework.permissions import (SAFE_METHODS, AllowAny,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from users.models import Subscription, User
 
+from users.models import Subscription, User
+from recipes.models import Favourit, Ingredient, Recipe, ShoppingCart, Tag
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (CustomUserSerializer, IngredientSerializer,
                           RecipeReadSerializer, RecipeShortSerializer,
                           RecipeWriteSerializer, SubscriptionSerializer,
                           TagSerializer)
 from .shopping_cart import get_shopping_cart
+from .pagination import LimitPageNumberPagination
+from .filters import NameSearchFilter, RecipeFilter
 
 
 class CustomUserViewsSet(UserViewSet):
@@ -91,16 +92,11 @@ class CustomUserViewsSet(UserViewSet):
                     {'message': 'Вы отписались от пользователя.'},
                     status=status.HTTP_204_NO_CONTENT,
                 )
-        else:
-            return Response(
-                {'errors': 'Подписка отсутствует!'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         return Response(
             {'errors': 'Некорректный запросc!'},
             status=status.HTTP_405_METHOD_NOT_ALLOWED,
-            )
+        )
 
 
 class TagViewsSet(ReadOnlyModelViewSet):
@@ -119,6 +115,8 @@ class IngredientViewsSet(ReadOnlyModelViewSet):
     serializer_class = IngredientSerializer
     pagination_class = None
     permission_classes = (AllowAny,)
+    filter_backends = (NameSearchFilter,)
+    search_fields = ('^name',)
 
 
 class RecipeViewsSet(ModelViewSet):
@@ -128,6 +126,7 @@ class RecipeViewsSet(ModelViewSet):
     permission_classes = (IsAuthorOrReadOnly,)
     pagination_class = LimitPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
     http_method_names = ['get', 'post', 'patch', 'create', 'delete']
 
     def get_serializer_class(self):

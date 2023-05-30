@@ -1,13 +1,13 @@
 from djoser.serializers import UserCreateSerializer
 from drf_extra_fields.fields import Base64ImageField
-from recipes.models import (Favourit, Ingredient, IngredientForRecipe, Recipe,
-                            ShoppingCart, Tag)
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import PrimaryKeyRelatedField
-from users.models import Subscription, User
 
-from .validators import validate_cooking_time, validate_ingredient
+from users.models import Subscription, User
+from recipes.models import (Favourit, Ingredient, IngredientForRecipe, Recipe,
+                            ShoppingCart, Tag)
+from .validators import validate_ingredient
 
 
 class GetSubscription(metaclass=serializers.SerializerMetaclass):
@@ -141,9 +141,6 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         validators=[validate_ingredient]
     )
     image = Base64ImageField()
-    cooking_time = serializers.IntegerField(
-        validators=[validate_cooking_time]
-    )
 
     class Meta:
         model = Recipe
@@ -200,9 +197,6 @@ class RecipeShortSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Recipe короткий."""
 
     image = Base64ImageField()
-    cooking_time = serializers.IntegerField(
-        validators=[validate_cooking_time]
-    )
 
     class Meta:
         model = Recipe
