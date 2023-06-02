@@ -93,7 +93,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     )
     author = CustomUserSerializer()
     ingredients = IngredientForRecipeSerializer(
-        source='recipe',
+        source='ingredientrecipes',
         many=True
     )
     image = Base64ImageField()
