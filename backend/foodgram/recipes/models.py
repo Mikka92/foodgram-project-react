@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import UniqueConstraint
 
 from users.models import User
 
@@ -93,6 +94,7 @@ class Recipe(models.Model):
     )
 
     class Meta:
+        ordering = ('-date',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
@@ -154,19 +156,25 @@ class ShoppingCart(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='shopping_cart',
+        related_name='shopping',
         verbose_name='Рецепт'
     )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='shopping_cart',
+        related_name='shopping',
         verbose_name='Пользователь'
     )
 
     class Meta:
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Список покупок'
+        constraints = (
+            UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='unique_shopping_cart'
+            ),
+        )
 
     def __str__(self):
         return self.name

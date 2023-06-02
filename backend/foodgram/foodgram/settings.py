@@ -11,17 +11,20 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-from datetime import timedelta
+from dotenv import load_dotenv
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+load_dotenv(os.path.join(BASE_DIR, 'infra', '.env'), verbose=True)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'd4-5%szu2y5mm8470kq!ejy0fz*-hipk4e!ry!u7&7a@z1u^za'
+SECRET_KEY = os.getenv('SECRET_KEY', default='d4-5%szu2y5mm8470kq!ejy0fz*-hipk4e!ry!u7&7a@z1u^za')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -88,11 +91,16 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='localhost'),
+        'PORT': os.getenv('DB_PORT', default='5432')
     }
 }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -147,11 +155,6 @@ DJOSER = {
     }
 }
 
-SIMPLE_JWT = {
-   'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-   'AUTH_HEADER_TYPES': ('Bearer',),
-}
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
@@ -170,6 +173,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL)
 
 LIMIT_NAME_LENGTH = 256
 LIMIT_SLUG_LENGTH = 200

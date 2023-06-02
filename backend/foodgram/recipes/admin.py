@@ -5,7 +5,7 @@ from .models import (Favourit, Ingredient, IngredientForRecipe, Recipe,
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'measurement_unit',)
+    list_display = ('id', 'name', 'measurement_unit',)
     search_fields = ('name', 'measurement_unit',)
     list_filter = ('name', 'measurement_unit',)
 
@@ -15,35 +15,38 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class IngredientForRecipeAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'ingredient', 'recipe', 'amount',)
-    search_fields = ('recipe', 'ingredient',)
+    list_display = ('id', 'ingredient', 'recipe', 'amount',)
+    search_fields = ('recipe__name', 'ingredient__name',)
     list_editable = ('ingredient', 'amount',)
-    list_filter = ('recipe',)
+    list_filter = ('recipe__name',)
 
 
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
-        'pk', 'author', 'name', 'image', 'description',
-        'cooking_time', 'pub_date',)
-    search_fields = ('author', 'name', 'tag',)
-    list_filter = ('author', 'name', 'tag',)
+        'id', 'author', 'name', 'image', 'text',
+        'cooking_time', 'date', 'favourites_count')
+    search_fields = ('author__username', 'name', 'tags__name',)
+    list_filter = ('author__username', 'name', 'tags__name',)
+
+    def favourites_count(self, obj):
+        return obj.favorites.count()
 
 
-class FavouritAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'recipe', 'user',)
-    search_fields = ('recipe', 'user',)
-    list_filter = ('recipe', 'user',)
+class FavouriteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'recipe', 'user',)
+    search_fields = ('recipe__name', 'user__username',)
+    list_filter = ('recipe__name', 'user__username',)
 
 
 class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'recipe', 'user',)
-    search_fields = ('recipe', 'user',)
-    list_filter = ('recipe', 'user',)
+    list_display = ('id', 'recipe', 'user',)
+    search_fields = ('recipe__name', 'user__username',)
+    list_filter = ('recipe__name', 'user__username',)
 
 
-admin.site.register(Recipe)
-admin.site.register(Ingredient)
-admin.site.register(Tag)
-admin.site.register(IngredientForRecipe)
-admin.site.register(Favourit)
-admin.site.register(ShoppingCart)
+admin.site.register(Recipe, RecipeAdmin)
+admin.site.register(Ingredient, IngredientAdmin)
+admin.site.register(Tag, TagAdmin)
+admin.site.register(IngredientForRecipe, IngredientForRecipeAdmin)
+admin.site.register(Favourit, FavouriteAdmin)
+admin.site.register(ShoppingCart, ShoppingCartAdmin)
