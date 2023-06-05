@@ -31,10 +31,10 @@ class CustomUserViewsSet(UserViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     @action(
-            detail=False,
-            methods=['get'],
-            permission_classes=[IsAuthenticated]
-        )
+        detail=False,
+        methods=['get'],
+        permission_classes=[IsAuthenticated]
+    )
     def subscriptions(self, request):
         user_subscriptions = User.objects.filter(
             subscribing__user=request.user
@@ -141,9 +141,9 @@ class RecipeViewsSet(ModelViewSet):
         serializer.save(author=self.request.user)
 
     @action(
-            detail=True,
-            methods=['post', 'delete'],
-            permission_classes=[IsAuthenticated]
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=[IsAuthenticated]
     )
     def favorite(self, request, pk=None):
         user = request.user
@@ -187,10 +187,10 @@ class RecipeViewsSet(ModelViewSet):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @action(
-            detail=True,
-            methods=['post', 'delete'],
-            permission_classes=[IsAuthenticated]
-        )
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=[IsAuthenticated]
+    )
     def shopping_cart(self, request, pk=None):
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)

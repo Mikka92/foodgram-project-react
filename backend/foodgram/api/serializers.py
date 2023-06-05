@@ -84,14 +84,22 @@ class IngredientForRecipeSerializer(serializers.ModelSerializer):
             'measurement_unit'
         )
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['id'] = instance.ingredient.id
+        return data
+
 
 class RecipeReadSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Recipe чтение."""
 
     tags = TagSerializer(
-        many=True
+        many=True,
+        read_only=True
     )
-    author = CustomUserSerializer()
+    author = CustomUserSerializer(
+        read_only=True
+    )
     ingredients = IngredientForRecipeSerializer(
         source='ingredientrecipes',
         many=True

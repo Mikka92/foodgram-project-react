@@ -31,6 +31,7 @@ class Tag(models.Model):
     """"Модель тег."""
     name = models.CharField(
         max_length=settings.LIMIT_NAME_LENGTH,
+        unique=True,
         verbose_name='Название'
     )
     color = models.CharField(
@@ -125,7 +126,7 @@ class IngredientForRecipe(models.Model):
         verbose_name_plural = 'Ингредиенты для рецепта'
 
     def __str__(self):
-        return self.name
+        return f'{self.ingredient.name} - {self.amount}'
 
 
 class Favourit(models.Model):
