@@ -3,7 +3,7 @@ name: foodgram-app workflow
 on: [push]
 
 jobs:
-  tests:
+  check_flake8:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,10 +23,10 @@ jobs:
       run: |
         python -m flake8
 
-  build_and_push_to_docker_hub:
+  build_and_push_docker_hub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
-    needs: tests
+    needs: check flake8
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2 
@@ -53,7 +53,7 @@ jobs:
       - name: copy docs, docker-compose, nginx files via ssh
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ secrets.DB_HOST }}
+          host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
@@ -86,7 +86,7 @@ jobs:
             sudo docker-compose exec -T backend python manage.py collectstatic --no-input
             sudo docker-compose exec -T backend python manage.py migrate
   
-  send_message:
+  send_message_telegram:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
