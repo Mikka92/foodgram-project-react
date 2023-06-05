@@ -149,7 +149,7 @@ class Favourit(models.Model):
         verbose_name_plural = 'Избранное'
 
     def __str__(self):
-        return self.name
+        return f'{self.user} liked {self.recipe}'
 
 
 class ShoppingCart(models.Model):
@@ -178,4 +178,4 @@ class ShoppingCart(models.Model):
         )
 
     def __str__(self):
-        return self.name
+        return f'{self.recipe} in {self.user} cart'
