@@ -35,7 +35,7 @@ def validate_cooking_time(value):
         raise ValidationError(
             'Время приготовления должно быть не менее 1 минуты!'
         )
-    elif value >= 32767:
+    if value >= 32767:
         raise ValidationError(
             'Время приготовления должно быть не более 32767 минут!'
         )

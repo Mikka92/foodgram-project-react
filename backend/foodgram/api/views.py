@@ -80,7 +80,7 @@ class CustomUserViewsSet(UserViewSet):
                 serializer.data,
                 status=status.HTTP_201_CREATED)
 
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             user = request.user
             author = get_object_or_404(User, id=id)
             subscription = Subscription.objects.filter(
@@ -168,7 +168,7 @@ class RecipeViewsSet(ModelViewSet):
                 status=status.HTTP_201_CREATED
             )
 
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             if not Favourit.objects.filter(
                 user=user, recipe=recipe
             ).exists():
@@ -213,7 +213,7 @@ class RecipeViewsSet(ModelViewSet):
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             if not ShoppingCart.objects.filter(
                 user=user, recipe=recipe
             ).exists():
