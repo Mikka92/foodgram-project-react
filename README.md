@@ -1,5 +1,5 @@
 <a id='start_page'></a>
-# <p align = center>Продуктовый помошник "Foodgram"</p>
+# <p align = center>Продуктовый помощник "Foodgram"</p>
 ___
 [![foodgram-app workflow](https://github.com/Mikka92/foodgram-project-react/actions/workflows/main.yml/badge.svg)](https://github.com/Mikka92/foodgram-project-react/actions/workflows/main.yml)
 
