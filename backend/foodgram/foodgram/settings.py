@@ -27,7 +27,7 @@ load_dotenv(os.path.join(BASE_DIR, 'infra', '.env'), verbose=True)
 SECRET_KEY = os.getenv('SECRET_KEY', default='d4-5%szu2y5mm8470kq!ejy0fz*-hipk4e!ry!u7&7a@z1u^za')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
