@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django_filters import rest_framework as filters
 from rest_framework.filters import SearchFilter
 
-from recipes.models import Recipe
+from recipes.models import Recipe, Tag
 
 User = get_user_model()
 
@@ -15,8 +15,11 @@ class RecipeFilter(filters.FilterSet):
     author = filters.ModelChoiceFilter(
         field_name='author', queryset=User.objects.all()
     )
-    tags = filters.AllValuesMultipleFilter(
-        field_name='tags__slug'
+    tags = filters.ModelMultipleChoiceFilter(
+        field_name='tags__slug',
+        queryset=Tag.objects.all(),
+        label='Tags',
+        to_field_name='slug'
     )
     is_favorited = filters.BooleanFilter(
         method='filter_is_favorited'

@@ -3,11 +3,11 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import PrimaryKeyRelatedField
+from django.core.exceptions import ValidationError
 
 from users.models import Subscription, User
 from recipes.models import (Favourit, Ingredient, IngredientForRecipe, Recipe,
                             ShoppingCart, Tag)
-from .validators import validate_ingredient
 
 
 class GetSubscription(metaclass=serializers.SerializerMetaclass):
@@ -145,10 +145,9 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     )
     author = CustomUserSerializer(read_only=True)
     ingredients = IngredientForRecipeSerializer(
-        many=True,
-        validators=[validate_ingredient]
+        many=True
     )
-    image = Base64ImageField()
+    image = Base64ImageField(required=True)
 
     class Meta:
         model = Recipe
@@ -162,6 +161,24 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'text',
             'cooking_time'
         )
+
+    def validate_ingredient(self, value):
+        if not value:
+            raise ValidationError(
+                'Нужно добавить ингридиент.'
+            )
+        if value['amount'] <= 0:
+            raise ValidationError(
+                'Количество должно быть больше 0!'
+            )
+        return value
+
+    def validate_tags(self, value):
+        if not value:
+            raise ValidationError(
+                'Нужно добавить тег!'
+            )
+        return value
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')
@@ -238,10 +255,14 @@ class SubscriptionSerializer(serializers.ModelSerializer, GetSubscription):
     def get_recipes_count(self, obj):
         return obj.recipes.count()
 
-    def get_recipes(self, obj):
-        serializer = RecipeShortSerializer(
-            obj.recipes.all(),
-            many=True,
-            context=self.context
-        )
-        return serializer.data
+    def get_recipes(self, user):
+        limit = self.context['request'].GET.get('recipes_limit')
+        recipes = user.recipes.all()[
+            :int(limit)
+        ] if limit else user.recipes.all()
+        return RecipeShortSerializer(recipes, many=True).data
+
+    def validate_subscribe_yourself(self, value):
+        if self.context['request'].user == self.context['author']:
+            raise ValidationError('Нельзя подписаться на самого себя!')
+        return value

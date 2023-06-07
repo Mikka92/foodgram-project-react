@@ -1,19 +1,7 @@
 import re
 from datetime import datetime
 
-from rest_framework.exceptions import ValidationError
-
-
-def validate_ingredient(value):
-    if not value:
-        raise ValidationError(
-            'Нужно добавить ингридиент.'
-        )
-    if value['amount'] <= 0:
-        raise ValidationError(
-            'Количество должно быть больше 0!'
-        )
-    return value
+from django.core.exceptions import ValidationError
 
 
 def validate_date(value):
