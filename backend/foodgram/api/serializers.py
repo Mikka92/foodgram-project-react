@@ -141,10 +141,12 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
+        required=True,
         many=True
     )
     author = CustomUserSerializer(read_only=True)
     ingredients = IngredientForRecipeSerializer(
+        required=True,
         many=True
     )
     image = Base64ImageField(required=True)
@@ -162,22 +164,16 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'cooking_time'
         )
 
-    def validate_ingredient(self, value):
-        if not value:
-            raise ValidationError(
-                'Нужно добавить ингридиент.'
+    def validate(self, value):
+        tags = value.get('tags')
+        ingredients = value.get('ingredients')
+        image = value.get('image')
+        if not tags or not ingredients or not image:
+            raise serializers.ValidationError(
+                'Теги, ингредиенты и изображения обязательны для заполнения!'
             )
-        if value['amount'] <= 0:
-            raise ValidationError(
-                'Количество должно быть больше 0!'
-            )
-        return value
-
-    def validate_tags(self, value):
-        if not value:
-            raise ValidationError(
-                'Нужно добавить тег!'
-            )
+        if len(tags) != len(set(tags)):
+            raise serializers.ValidationError('Теги не должны повторяться!')
         return value
 
     def create(self, validated_data):
